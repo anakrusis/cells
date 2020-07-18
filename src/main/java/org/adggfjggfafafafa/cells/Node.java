@@ -2,11 +2,15 @@ package org.adggfjggfafafafa.cells;
 
 import java.util.UUID;
 
-public class Cell {
+public class Node {
     double x; double y;
     UUID uuid;
-    public Cell( double x, double y ){
+    public Node(double x, double y ){
         this.x = x; this.y = y;
+    }
+
+    public void update() {
+
     }
 
     public double getX() {

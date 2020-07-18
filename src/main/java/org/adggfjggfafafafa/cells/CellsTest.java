@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class CellsTest extends PApplet {
 
-    HashMap<UUID, Cell> cells = new HashMap<>();
+    HashMap<UUID, Node> cells = new HashMap<>();
     Camera camera = new Camera( 0 , 0 , 1);
 
     public void settings() {
@@ -16,7 +16,7 @@ public class CellsTest extends PApplet {
 
     public void setup() {
 
-        Cell cell = new Cell(0, 0);
+        Node cell = new Node(20, 20);
         cell.setUuid( UUID.randomUUID() );
         cells.put(cell.getUuid(), cell);
     }
@@ -40,14 +40,14 @@ public class CellsTest extends PApplet {
                 camera.zoom -= 0.1;
             }
         }
-        camera.zoom = Math.max( camera.zoom, 0.1 );
+        camera.zoom = Math.max( camera.zoom, 1 );
 
         translate(width/2f, height/2f);
         scale( (float) camera.zoom );
         translate( (float)-camera.x, (float)-camera.y );
 
         ellipseMode( CENTER );
-        for (Cell cell : cells.values()){
+        for (Node cell : cells.values()){
             ellipse( (float)cell.getX(), (float)cell.getY(), 5, 5 );
         }
     }
