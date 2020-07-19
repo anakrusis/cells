@@ -13,10 +13,10 @@ public class CellsTest extends PApplet {
     private HashMap<UUID, Node> nodes = new HashMap<>();
     private Camera camera = new Camera( 0 , 0 , 1);
     private int mapWidth = 400; private int mapHeight = 400;
-    private int nodeCount = 10;
+    private int nodeCount = 100;
 
     public void settings() {
-        size(800,600);
+        size(1000,600);
         noSmooth();
     }
 
@@ -38,14 +38,13 @@ public class CellsTest extends PApplet {
 
                     // iterates through all other nodes and makes sure it isn't too close to any
                     double nearestDistance = 10000;
-                    for (UUID uuid : nodes.keySet()){
-                        Node node = nodes.get(uuid);
+                    for (Node node : nodes.values()){
                         double nodeDist = distance( node.x, node.y, randomX, randomY );
                         if (nodeDist < nearestDistance ) {
                             nearestDistance = nodeDist;
                         }
                     }
-                    if (nearestDistance > 5){
+                    if (nearestDistance > 10){
                         Node node = new Node(randomX, randomY);
                         node.setUuid( UUID.randomUUID() );
                         nodes.put(node.getUuid(), node);
@@ -58,17 +57,26 @@ public class CellsTest extends PApplet {
     }
 
     private void calculateNeighbors(){
+        for (Node node : nodes.values()){
+            for (Node otherNode : nodes.values()){
 
+                if (node != otherNode) {
+                    double distance = distance(node.x, node.y, otherNode.x, otherNode.y);
+                    if (distance < 20){
+                        node.neighborUUIDs.add( otherNode.uuid );
+                    }
+                }
+            }
+        }
     }
 
     public void setup() {
 
-        noiseSeed( 123456 );
+        noiseSeed( 12345 );
         font = createFont("Arial",16,true);
 
         generateNodes();
-
-
+        calculateNeighbors();
     }
 
     public void draw() {
@@ -77,13 +85,13 @@ public class CellsTest extends PApplet {
 
         if (keyPressed){
             if (key == 'w') {
-                camera.y--;
+                camera.y-=2;
             } else if (key == 's') {
-                camera.y++;
+                camera.y+=2;
             } else if (key == 'a') {
-                camera.x--;
+                camera.x-=2;
             } else if (key == 'd') {
-                camera.x++;
+                camera.x+=2;
             } else if (key == 'q') {
                 camera.zoom += 0.1;
             } else if (key == 'e') {
@@ -118,6 +126,14 @@ public class CellsTest extends PApplet {
 
         ellipseMode( CENTER );
         fill(255); stroke(0);
+
+        for (Node cell : nodes.values()){
+            for ( UUID uuid : cell.neighborUUIDs ){
+                Node neighbor = nodes.get(uuid);
+                line( (float)cell.x, (float)cell.y, (float)neighbor.x, (float)neighbor.y );
+            }
+        }
+
         for (Node cell : nodes.values()){
             ellipse( (float)cell.getX(), (float)cell.getY(), 3, 3 );
         }
